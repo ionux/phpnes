@@ -5,12 +5,19 @@
  * Based off of Ben Firshman's JSNES and Jamie Sanders' vNES.
  *
  * @copyright Andrew Vy 2015
- * @license MIT
+ * @license GPL
  */
 
 namespace PHPNES;
 
 use PHPNES\PPU\Tile;
+
+// Use all mappers
+
+use PHPNES\MMAP\Mappers\DirectAccess;
+use PHPNES\MMAP\Mappers\NintendoMMC1;
+use PHPNES\MMAP\Mappers\NintendoMMC3;
+use PHPNES\MMAP\Mappers\Unrom;
 
 class ROM {
 	const VERTICAL_MIRRORING = 0;
@@ -88,6 +95,8 @@ class ROM {
 	}
 
 	public function load($data) {
+		$dataLength = strlen($data);
+
 		if (strrpos($data, "NES\x1a") === false) {
 			// This is an invalid ROM.
 			return false;
@@ -120,10 +129,9 @@ class ROM {
 			$this->mapperType &= 0xF;
 		}
 
-
 		// Load PRG-ROM Banks
 
-		$this->rom = array_fill(0, $this->romCount, 0);
+		$this->rom = array_fill(0, $this->romCount, []);
 
 		$offset = 16;
 
@@ -131,7 +139,7 @@ class ROM {
 			$this->rom[$i] = array_fill(0, 16384, 0x00);
 			for ($j = 0; $j < 16384; $j++) {
 				// if offset + j >= data length
-				if (isset($data[$offset+$j])) {
+				if ($offset + $j >= $dataLength) {
 					break;
 				}
 
@@ -143,12 +151,12 @@ class ROM {
 
 		// Load CHR-ROM Banks
 
-		$this->vrom = array_fill(0, $this->vromCount, 0);
+		$this->vrom = array_fill(0, $this->vromCount, []);
 
 		for ($i = 0; $i < $this->vromCount; $i ++) {
 			$this->vrom[$i] = array_fill(0, 4096, 0x00);
 			for ($j = 0; $j < 4096; $j++) {
-				if (isset($data[$offset+$j])) {
+				if ($offset + $j >= $dataLength) {
 					break;
 				}
 
@@ -160,7 +168,7 @@ class ROM {
 
 		// Create VROM Tiles
 
-		$this->vromTile = array_fill(0, $this->vromCount, 0);
+		$this->vromTile = array_fill(0, $this->vromCount, []);
 
 		for ($i = 0; $i < $this->vromCount; $i++) {
 			$this->vromTile[$i] = array_fill(0, 256, 0x00);
@@ -199,7 +207,13 @@ class ROM {
 	}
 
 	public function createMapper() {
+		$mapper = $this->NES->MapperProvider->getMapperByType($this->mapperType);
 
+		if ($mapper) {
+			return new $mapper($this->NES);
+		} else {
+			// Mapper doesn't exist or isn't supported
+		}
 	}
 
 	public function getMirroringType() {

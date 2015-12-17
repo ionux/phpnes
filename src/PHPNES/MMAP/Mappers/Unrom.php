@@ -8,13 +8,16 @@
  * @license GPL
  */
 
-namespace PHPNES;
+namespace PHPNES\MMAP\Mappers;
 
-class MMAP {
-	public $NES;
+use PHPNES\MMAP\Mapper;
+
+class Unrom extends Mapper {
 
 	public function __construct($NES) {
-		$this->NES = $NES;
+		parent::__construct($NES);
 	}
 
+	public function loadRom() {
+	}
 }

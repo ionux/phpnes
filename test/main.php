@@ -5,7 +5,7 @@
  * Based off of Ben Firshman's JSNES and Jamie Sanders' vNES.
  *
  * @copyright Andrew Vy 2015
- * @license MIT
+ * @license GPL
  */
 
 require "vendor/autoload.php";
@@ -13,6 +13,7 @@ require "vendor/autoload.php";
 use PHPNES\NES;
 
 $nes = new NES();
+$nes->debugMode = true;
 
 /*
 The rom being used for testing is an iNES executable
@@ -27,3 +28,4 @@ Check roms/croom/croom.b64.license for details.
 $romData = file_get_contents("roms/croom/croom.nes");
 
 $nes->loadRom($romData);
+$nes->start();

@@ -8,13 +8,12 @@
  * @license GPL
  */
 
-namespace PHPNES;
+namespace PHPNES\MMAP;
 
-class MMAP {
+class Mapper {
 	public $NES;
 
 	public function __construct($NES) {
 		$this->NES = $NES;
 	}
-
 }

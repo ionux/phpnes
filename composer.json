@@ -1,14 +1,16 @@
 {
     "name": "andrewvy/phpnes",
     "description": "A PHP NES Emulator",
-    "license": "MIT",
+    "license": "GPL",
     "authors": [
         {
             "name": "Andrew Vy",
             "email": "andrew@andrewvy.com"
         }
     ],
-    "require": {},
+    "require": {
+		"react/react": "0.4.*"
+	},
     "autoload": {
         "psr-4": {
             "PHPNES\\": "src/PHPNES/"
